@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redirecting...</title>
+  <script>
+    (function() {
+      const path = window.location.pathname;
+
+      // If it's a vote route, load index.html and preserve the contract address
+      if (path.startsWith('/vote/') && path.split('/').filter(Boolean).length >= 2) {
+        const pathParts = path.split('/').filter(Boolean);
+        const contractAddress = pathParts[1];
+        sessionStorage.setItem('voteContractAddress', contractAddress);
+
+        // Redirect to index.html but keep the URL the same
+        fetch('/index.html')
+          .then(response => response.text())
+          .then(html => {
+            document.open();
+            document.write(html);
+            document.close();
+          })
+          .catch(err => {
+            console.error('Failed to load index.html:', err);
+            document.body.innerHTML = "<h1>404 - Page Not Found</h1>";
+          });
+      } else {
+        // Otherwise, show normal 404
+        document.body.innerHTML = `
+          <h1>404 - Page Not Found</h1>
+          <p>The page you're looking for doesn't exist.</p>
+          <a href="/">Go back home</a>
+        `;
+      }
+    })();
+  </script>
+</head>
+<body>
+</body>
+</html>
